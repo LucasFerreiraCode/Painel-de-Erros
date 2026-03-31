@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Painel de Erros</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="light">
+
+    <div class="container">
+
+        <!-- HEADER -->
+        <header class="header">
+            <div>
+                <h1>Painel de Erros - Meta WhatsApp</h1>
+                <p>Consulta rápida e diagnóstico inteligente</p>
+            </div>
+
+            <button class="toggle-theme" onclick="toggleTheme()">🌙</button>
+        </header>
+
+        <!-- BUSCA -->
+        <div class="busca-box">
+            <input type="text" id="busca" placeholder="Digite o código do erro (ex: 131049)" oninput="filtrarErros()">
+        </div>
+
+        <!-- FILTRO POR CATEGORIA -->
+        <div class="filtros">
+            <select id="filtroCategoria" onchange="filtrarErros()">
+                <option value="">Todas categorias</option>
+                <option value="Entrega">Entrega</option>
+                <option value="Bloqueio">Bloqueio</option>
+                <option value="Template">Template</option>
+                <option value="Conta">Conta</option>
+                <option value="Limite">Limite</option>
+            </select>
+        </div>
+
+        <!-- PAINEL -->
+        <div class="painel">
+
+            <!-- LISTA -->
+            <div class="card lista">
+                <h2>Erros</h2>
+                <ul id="listaErros"></ul>
+            </div>
+
+            <!-- DETALHES -->
+            <div class="card detalhes">
+                <h2>Detalhes</h2>
+                <div id="detalhes">
+                    <p class="placeholder">Selecione um erro para ver os detalhes</p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

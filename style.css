@@ -1,0 +1,225 @@
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* TEMA */
+body {
+    font-family: 'Segoe UI', Arial;
+    transition: 0.3s;
+}
+
+/* DARK (default) */
+body.dark {
+    background: #292626;
+    color: #e2e8f0;
+}
+
+/* LIGHT */
+body.light {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+/* CONTAINER */
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 25px;
+}
+
+/* HEADER */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.toggle-theme {
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* INPUT */
+input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 15px;
+}
+
+/* PAINEL */
+.painel {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* CARDS */
+.card {
+    flex: 1;
+    padding: 20px;
+    border-radius: 12px;
+    transition: 0.3s;
+}
+
+/* DARK CARD */
+.dark .card {
+    background: #1e293b;
+}
+
+/* LIGHT CARD */
+.light .card {
+    background: white;
+}
+
+/* LISTA */
+li {
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.dark li {
+    background: #334155;
+}
+
+.dark li:hover {
+    background: #475569;
+}
+
+.light li {
+    background: #e2e8f0;
+}
+
+.light li:hover {
+    background: #cbd5f5;
+}
+
+/* DETALHES */
+.card.detalhes {
+    background: #78009F;
+    color: #ffffff;
+    padding: 24px;
+    border-radius: 12px;
+    line-height: 1.6;
+}
+
+.card.detalhes h2 {
+    margin-bottom: 8px;
+    color: #ffffff;
+}
+
+.card.detalhes .field {
+    margin-bottom: 12px;
+}
+
+.card.detalhes .field .label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: rgba(255,255,255,0.95);
+}
+
+.card.detalhes .field .value {
+    color: rgba(255,255,255,0.9);
+}
+
+.card.detalhes hr {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    margin: 10px 0 14px;
+}
+
+.card.detalhes .copy-btn {
+    margin-top: 10px;
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.card.detalhes .copy-btn:hover {
+    background: rgba(255,255,255,0.18);
+}
+
+/* LISTA em modo claro: usar mesmo roxo dos detalhes */
+.light .card.lista {
+    background: #ffffff; /* card branco para menos impacto */
+    color: #111111;
+}
+
+.light .card.lista h2 {
+    background: #78009F; /* cabeçalho roxo */
+    color: #ffffff;
+    padding: 14px;
+    border-radius: 8px 8px 0 0;
+    margin: -20px -20px 12px;
+}
+
+.light .card.lista li {
+    background: transparent;
+    color: #2b2b2b;
+    border: 1px solid rgba(0,0,0,0.06);
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+
+.light .card.lista li:hover {
+    background: rgba(0,0,0,0.03);
+}
+
+/* GRID */
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+/* BOTÕES */
+.btn-primary {
+    margin-top: 15px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #22c55e;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    transform: scale(1.03);
+}
+
+.delete-btn {
+    background: red;
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+    .painel {
+        flex-direction: column;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
