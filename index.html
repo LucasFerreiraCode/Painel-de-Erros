@@ -1,35 +1,40 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
-    <title>Painel de Erros</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Erros - Meta WhatsApp API</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 
-<body class="light">
-
-    <div class="container">
-
-        <!-- HEADER -->
-        <header class="header">
-            <div>
-                <h1>Painel de Erros - Meta WhatsApp</h1>
-                <p>Consulta rápida e diagnóstico inteligente</p>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <div class="header-brand">
+                <div class="brand-icon">Y</div>
+                <div>
+                    <h1 class="brand-title">Painel de Erros</h1>
+                    <p class="brand-subtitle">Meta WhatsApp API · Diagnóstico inteligente</p>
+                </div>
             </div>
-
-            <button class="toggle-theme" onclick="toggleTheme()">🌙</button>
-        </header>
-
-        <!-- BUSCA -->
-        <div class="busca-box">
-            <input type="text" id="busca" placeholder="Digite o código do erro (ex: 131049)" oninput="filtrarErros()">
         </div>
-
-        <!-- FILTRO POR CATEGORIA -->
-        <div class="filtros">
-            <select id="filtroCategoria" onchange="filtrarErros()">
-                <option value="">Todas categorias</option>
+    </header>
+    <main class="main">
+        <div class="stats" id="stats"></div>
+        <div class="filters">
+            <div class="search-wrapper">
+                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.3-4.3" />
+                </svg>
+                <input type="text" id="searchInput" placeholder="Buscar por código ou descrição..."
+                    class="search-input">
+            </div>
+            <select id="categoryFilter" class="category-select">
+                <option value="all">Todas categorias</option>
                 <option value="Entrega">Entrega</option>
                 <option value="Bloqueio">Bloqueio</option>
                 <option value="Template">Template</option>
@@ -37,28 +42,24 @@
                 <option value="Limite">Limite</option>
             </select>
         </div>
-
-        <!-- PAINEL -->
-        <div class="painel">
-
-            <!-- LISTA -->
-            <div class="card lista">
-                <h2>Erros</h2>
-                <ul id="listaErros"></ul>
+        <div class="panel">
+            <div class="error-list-card">
+                <h2 class="list-title">Erros (<span id="errorCount">0</span>)</h2>
+                <ul class="error-list" id="errorList"></ul>
             </div>
-
-            <!-- DETALHES -->
-            <div class="card detalhes">
-                <h2>Detalhes</h2>
-                <div id="detalhes">
-                    <p class="placeholder">Selecione um erro para ver os detalhes</p>
+            <div class="error-details-card" id="errorDetails">
+                <div class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                        style="opacity:0.3">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                    <p class="empty-title">Selecione um erro para ver os detalhes</p>
+                    <p class="empty-sub">Clique em qualquer item da lista</p>
                 </div>
             </div>
-
         </div>
-
-    </div>
-
+    </main>
     <script src="script.js"></script>
 </body>
 
