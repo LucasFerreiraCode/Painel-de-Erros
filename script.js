@@ -1,7 +1,9 @@
 var errosWhatsApp = [
+    { codigo: "130472", categoria: "Falha", descricao: "Número em experimento", causa: "Número do usuário em experimento.", solucao: "Aguardar liberação automática.", resposta: "O número informado está em um experimento da Meta e temporariamente indisponível.", acao: "Aguardar algumas horas e tentar novamente." },
+
     { codigo: "131026", categoria: "Entrega", descricao: "Message Undeliverable", causa: "Número não está no WhatsApp ou inválido.", solucao: "Validar número e confirmar se está ativo.", resposta: "O número informado não está disponível no WhatsApp ou está inválido.", acao: "Confirmar número no catálogo do WhatsApp e reenviar." },
     { codigo: "131049", categoria: "Entrega", descricao: "Meta bloqueou envio", causa: "Mensagens consideradas indesejadas.", solucao: "Revisar conteúdo e reduzir frequência.", resposta: "Identificamos baixa qualidade de engajamento. Recomendamos revisar o conteúdo e frequência.", acao: "Inserir consentimento explícito e reduzir volume de envios." },
-    { codigo: "130472", categoria: "Entrega", descricao: "Número em experimento", causa: "Teste interno da plataforma.", solucao: "Aguardar liberação automática.", resposta: "O número informado está em um experimento da Meta e temporariamente indisponível.", acao: "Aguardar algumas horas e tentar novamente." },
+
     { codigo: "131048", categoria: "Bloqueio", descricao: "Erros de Bloqueio / Spam", causa: "Muitas mensagens ou denúncias.", solucao: "Reduzir envios e revisar estratégia.", resposta: "O número atingiu limites de envio. Recomendamos reduzir o volume.", acao: "Pauses envios e revise a qualidade da mensagem." },
     { codigo: "131042", categoria: "Conta", descricao: "Problema de pagamento", causa: "Falta de billing ativo.", solucao: "Configurar pagamento.", resposta: "Há um problema de faturamento na conta. Revise as configurações.", acao: "Atualizar dados de pagamento e reconectar a conta." },
     { codigo: "132000", categoria: "Template", descricao: "Template inválido", causa: "Parâmetros incorretos.", solucao: "Corrigir estrutura.", resposta: "O template enviado possui parâmetros inválidos.", acao: "Ajustar variáveis e enviar para validação novamente." },
@@ -9,14 +11,16 @@ var errosWhatsApp = [
 ];
 
 var errosSMS = [
-    { codigo: "10001", categoria: "Entrega", descricao: "Aparelho de destino desconhecido", causa: "Prefixo desatualizado ou número digitado incorretamente.", solucao: "Realizar a atualização do prefixo, ou então digitar o número corretamente.", resposta: "Número inválido. Use o padrão internacional (E.164).", acao: "V" },
+    { codigo: "10001", categoria: "Falha", descricao: "Aparelho de destino desconhecido", causa: "Prefixo desatualizado ou número digitado incorretamente.", solucao: "Realizar a atualização do prefixo, ou então digitar o número corretamente.", resposta: "Número inválido. Use o padrão internacional (E.164).", acao: "V" },
 
     { codigo: "10004", categoria: "Entrega", descricao: "Aparelho de destino inativo", causa: "Aparelho inativo no momento da tentativa de entrega do SMS.", solucao: "Entrar em contato com suporte e realizarem uma nova tentativa de disparo.", resposta: "Sua conta está com saldo insuficiente para envio de SMS.", acao: "Analisar se o número está realmente ativo e apto para recebimento." },
 
-    { codigo: "10009", categoria: "Bloqueio", descricao: "Invalid Message: Anti-fraude", causa: "Conteúdo bloqueado pelo anti-fraude.", solucao: "Revisar o conteúdo e realizar a liberação prévia em ambas as pontas.", resposta: "Mensagem bloqueada pelo operador devido a conteúdo suspeito.", acao: "Alterar o texto e solicitar nova autorização do usuário." },
+    { codigo: "10007", categoria: "Indisponivel", descricao: "Rejeitado pela operadora", causa: "A operadora rejeitou a mensagem.", solucao: "Entrar em contato com suporte para que analisem.", resposta: "Rota de envio está temporariamente indisponível. Tente novamente em alguns minutos.", acao: "Aguardar o retorno do time de suporte para análise e identificação do ocorrido." },
 
-    { codigo: "10010", categoria: "Entrega", descricao: "Aparelho de destino inacessível", causa: "A operadora não obteve sucesso para estabelecer contato com a linha do cliente.", solucao: "Recomendamos nesse caso, que o titular da linha entre em contato com a operadora e identifique possíveis indisponibilidades em sua linha.", resposta: "Ultrapassou limite de envio de SMS. Aguarde e tente novamente.", acao: "Diminuir taxa de envio e tentar novamente após janela." },
-    { codigo: "210005", categoria: "Entrega", descricao: "Operadora não suportada", causa: "Operadora no bloqueio.", solucao: "Usar operadora alternativa.", resposta: "O número pertence a operadora não suportada atualmente.", acao: "Verificar operadora e mudar para rota compatível." }
+    { codigo: "10009", categoria: "Bloqueio", descricao: "Invalid Message: Anti-fraude", causa: "Conteúdo bloqueado pelo anti-fraude.", solucao: "Revisar o conteúdo e realizar a liberação prévia em ambas as pontas.", resposta: "Mensagem bloqueada pelo operador devido a conteúdo suspeito.", acao: "Entre em contato com o suporte para solicitar a liberação do seu conteúdo. Após a solicitação, aguarde a disponibilização do conteúdo e do link para que novos envios possam ser realizados." },
+
+    { codigo: "10010", categoria: "Entrega", descricao: "Aparelho de destino inacessível", causa: "A operadora não obteve sucesso para estabelecer contato com a linha do cliente.", solucao: "Recomendamos nesse caso, que o titular da linha entre em contato com a operadora e identifique possíveis indisponibilidades em sua linha.", resposta: "Ultrapassou limite de envio de SMS. Aguarde e tente novamente.", acao: "Verificar se o aparelho está com sinal, se está desligado ou em modo avião." },
+    { codigo: "10005", categoria: "Falha", descricao: "Erro de roteamento", causa: "Rota indisponível.", solucao: "Entrar em contato com suporte.", resposta: "O número pertence a operadora não suportada atualmente.", acao: "Verificar com o time de suporte se a rota está disponível." }
 ];
 
 var errosEmail = [
@@ -35,9 +39,9 @@ var errosRCS = [
     { codigo: "40005", categoria: "Template", descricao: "Rich card inválida", causa: "Estrutura incorreta.", solucao: "Corrigir template.", resposta: "Rich card possui erros.", acao: "Ajustar estrutura e validar." }
 ];
 
-var CATEGORIAS = ["Entrega", "Bloqueio", "Template", "Conta", "Limite"];
+var CATEGORIAS = ["Entrega", "Bloqueio", "Template", "Conta", "Limite", "Falha"];
 var selectedCodigo = null, activeCategory = "all", activeChannel = "whatsapp", erros = errosWhatsApp;
-var CATEGORIAS = ["Entrega", "Bloqueio", "Template", "Conta", "Limite"];
+var CATEGORIAS = ["Entrega", "Bloqueio", "Template", "Conta", "Limite", "Falha"];
 var selectedCodigo = null, activeCategory = "all";
 
 function diagnostico(e) {
@@ -59,6 +63,7 @@ function diagnostico(e) {
         case "Entrega": return { nivel: "Médio", acao: "Validar número e conteúdo." };
         case "Limite": return { nivel: "Médio", acao: "Reduzir volume de envios." };
         case "Template": return { nivel: "Baixo", acao: "Corrigir parâmetros." };
+        case "Falha": return { nivel: "Alto", acao: "Investigar e tentar novamente." };
         default: return { nivel: "Baixo", acao: "Monitorar situação." };
     }
 }
@@ -126,7 +131,7 @@ function renderDetails() {
         d.acao = "Entrar em contato com o suporte para atualização do prefixo ou correção do número.";
     }
     var c = document.getElementById("errorDetails");
-    c.innerHTML = '<div class="detail-header"><div><div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.25rem"><span class="detail-title">Erro ' + erro.codigo + '</span><span class="badge badge-' + erro.categoria + '">' + erro.categoria + '</span></div><div class="detail-desc">' + erro.descricao + '</div></div><span class="severity severity-' + d.nivel + '">' + d.nivel + '</span></div><hr class="divider"><div class="info-field"><span class="info-icon">📄</span><div><div class="info-label">Causa</div><div class="info-value">' + erro.causa + '</div></div></div><div class="info-field"><span class="info-icon">🔧</span><div><div class="info-label">Solução</div><div class="info-value">' + erro.solucao + '</div></div></div><div class="info-field"><span class="info-icon">⚡</span><div><div class="info-label">Ação recomendada</div><div class="info-value">' + d.acao + '</div></div></div>';
+    c.innerHTML = '<div class="detail-header"><div><div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.25rem"><span class="detail-title">Erro ' + erro.codigo + '</span><span class="badge badge-' + erro.categoria + '">' + erro.categoria + '</span></div><div class="detail-desc">' + erro.descricao + '</div></div></div><hr class="divider"><div class="info-field"><span class="info-icon">📄</span><div><div class="info-label">Causa</div><div class="info-value">' + erro.causa + '</div></div></div><div class="info-field"><span class="info-icon">🔧</span><div><div class="info-label">Solução</div><div class="info-value">' + erro.solucao + '</div></div></div><div class="info-field"><span class="info-icon">⚡</span><div><div class="info-label">Ação recomendada</div><div class="info-value">' + d.acao + '</div></div></div>';
 
 }
 
