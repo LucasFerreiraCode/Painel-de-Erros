@@ -38,7 +38,32 @@ body {
 .header-inner {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 1.25rem 1.5rem
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.channel-tabs {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.channel-btn {
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--fg);
+    border-radius: 999px;
+    padding: 0.35rem 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+}
+
+.channel-btn.active {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: var(--primary-fg);
 }
 
 .header-brand {
@@ -48,16 +73,17 @@ body {
 }
 
 .brand-icon {
-    width: 40px;
-    height: 40px;
+    width: 96px;
+    height: 96px;
     border-radius: 12px;
-    background: var(--primary);
-    color: var(--primary-fg);
-    display: flex;
+    object-fit: contain;
+    background: #fff;
+    padding: 6px;
+}
+
+.header-brand {
     align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 1.125rem
+    gap: 1rem;
 }
 
 .brand-title {
