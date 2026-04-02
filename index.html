@@ -29,7 +29,6 @@
         </div>
     </header>
     <main class="main">
-        <div class="stats" id="stats"></div>
         <div class="filters">
             <div class="search-wrapper">
                 <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
@@ -40,20 +39,17 @@
                 <input type="text" id="searchInput" placeholder="Buscar por código ou descrição..."
                     class="search-input">
             </div>
-            <select id="categoryFilter" class="category-select">
-                <option value="all">Todas categorias</option>
-                <option value="Entrega">Entrega</option>
-                <option value="Bloqueio">Bloqueio</option>
-                <option value="Template">Template</option>
-                <option value="Conta">Conta</option>
-                <option value="Limite">Limite</option>
-                <option value="Falha">Falha</option>
-            </select>
         </div>
         <div class="panel">
             <div class="error-list-card">
-                <h2 class="list-title">Erros (<span id="errorCount">0</span>)</h2>
+                <h2 class="list-title">Falhas (<span id="errorCount">0</span>)</h2>
                 <ul class="error-list" id="errorList"></ul>
+                <div class="meta-help" id="metaHelp" style="display: none;">
+                    <div class="meta-help-content">
+                        <p class="meta-help-text">Não encontrou o código que procura?</p>
+                        <a href="https://developers.facebook.com/documentation/business-messaging/whatsapp/support/error-codes" target="_blank" class="meta-help-link">Consulte a documentação oficial da Meta</a>
+                    </div>
+                </div>
             </div>
             <div class="error-details-card" id="errorDetails">
                 <div class="empty-state">

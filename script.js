@@ -10,8 +10,8 @@ var errosWhatsApp = [
     { codigo: "131026", categoria: "Falha", descricao: "Mensagem não entregue", causa: "A mensagem não foi entregue porque o número de destino pode não possuir WhatsApp ativo, estar bloqueado, localizado em uma região restrita, não ter aceitado os termos mais recentes do aplicativo ou estar utilizando uma versão desatualizada.", solucao: "Verificar se o número de destino é válido e possui WhatsApp ativo. Garantir que o aplicativo esteja atualizado e que não haja bloqueios que impeçam o recebimento de mensagens.", resposta: "O sistema identificou uma falha genérica 131026.", acao: "Confirmar o número com o destinatário e validar se ele consegue interagir normalmente com outros contatos. Caso o problema persista, orientar o usuário a atualizar o aplicativo e revisar possíveis restrições na conta." },
     { codigo: "131031", categoria: "Falha", descricao: "Conta bloqueada", causa: "Revisar o status da conta, validar o PIN de verificação em duas etapas e garantir que todas as etapas de verificação estejam concluídas corretamente.", solucao: "Verificar se os parâmetros estão corretos e reprocessar.", resposta: "O sistema identificou uma falha genérica 131031.", acao: "Verificar possíveis bloqueios ou pendências na conta. Caso não seja possível resolver, entrar em contato com o suporte e o gerente de conta responsável para análise e orientação junto à Meta." },
     { codigo: "131053", categoria: "Falha", descricao: "Erro ao subir mídia", causa: "Falha no upload da mídia devido a formato não suportado, arquivo corrompido ou problema no próprio arquivo enviado.", solucao: "Verificar o arquivo de mídia, garantindo que esteja em um formato suportado e que não esteja corrompido. Caso necessário, realizar um novo upload do arquivo.", resposta: "O sistema identificou uma falha genérica 131053.", acao: "Confirmar se o formato e o tamanho da mídia estão dentro dos padrões suportados. Após os ajustes, realizar uma nova tentativa de envio. Se o erro persistir, testar com outro arquivo ou acionar o suporte e o gerente de conta responsável para análise." },
-    { codigo: "132005", categoria: "Template", descricao: "Template inválido 132005", causa: "Parâmetros do template inválidos.", solucao: "Corrigir o template e reenviar para aprovação.", resposta: "O template enviado possui erro 132005.", acao: "Ajustar template e enviar novamente." },
-    { codigo: "132007", categoria: "Template", descricao: "Template inválido 132007", causa: "Parâmetros do template inválidos.", solucao: "Corrigir o template e reenviar para aprovação.", resposta: "O template enviado possui erro 132007.", acao: "Ajustar template e enviar novamente." }
+    { codigo: "132005", categoria: "Template", descricao: "Texto do template criado, ficou extenso e gerou falha", causa: "O template utilizado continha uma quantidade elevada de variáveis e/ou conteúdo, fazendo com que o texto final excedesse os limites suportados pelo WhatsApp Manager, gerando falha no processamento da mensagem.", solucao: "Reduzir o conteúdo do template e a quantidade de variáveis, além de revisar as traduções para garantir que o tamanho final esteja dentro do limite permitido.", resposta: "O template enviado possui erro 132005.", acao: "Revisar o template no WhatsApp Manager, validar o tamanho final da mensagem considerando variáveis e traduções e, após os ajustes, realizar uma nova tentativa de envio." },
+    { codigo: "132007", categoria: "Template", descricao: "Template viola política de formato / conteúdo.", causa: "O template utilizado viola as políticas de conteúdo ou formato do WhatsApp, por conter elementos não permitidos ou fora das diretrizes da plataforma.", solucao: "Revisar o conteúdo do template e ajustá-lo conforme as políticas do WhatsApp, removendo ou corrigindo os elementos que estejam em desacordo.", resposta: "O template enviado possui erro 132007.", acao: "Consultar as diretrizes oficiais do WhatsApp, realizar as correções necessárias no template e reenviá-lo para aprovação. Após a aprovação, realizar uma nova tentativa de envio." }
 ];
 
 var errosSMS = [
@@ -43,10 +43,7 @@ var errosRCS = [
     { codigo: "40005", categoria: "Template", descricao: "Rich card inválida", causa: "Estrutura incorreta.", solucao: "Corrigir template.", resposta: "Rich card possui erros.", acao: "Ajustar estrutura e validar." }
 ];
 
-var CATEGORIAS = ["Entrega", "Bloqueio", "Template", "Conta", "Limite", "Falha"];
-var selectedCodigo = null, activeCategory = "all", activeChannel = "whatsapp", erros = errosWhatsApp;
-var CATEGORIAS = ["Entrega", "Bloqueio", "Template", "Conta", "Limite", "Falha"];
-var selectedCodigo = null, activeCategory = "all";
+var selectedCodigo = null, activeChannel = "whatsapp", erros = errosWhatsApp;
 
 function diagnostico(e) {
     if (e.acao) {
@@ -104,28 +101,51 @@ function switchChannel(channel) {
         document.getElementById("emailBtn").classList.remove("active");
     }
     selectedCodigo = null;
-    activeCategory = "all";
-    document.getElementById("categoryFilter").value = "all";
+
+    var listTitle = document.querySelector('.list-title');
+    var metaHelp = document.getElementById('metaHelp');
+    if (channel === 'whatsapp') {
+        listTitle.classList.remove('sms');
+        listTitle.classList.add('is-falha');
+        listTitle.innerHTML = 'Falhas (<span id="errorCount">0</span>)';
+        metaHelp.style.display = 'block';
+    } else if (channel === 'sms') {
+        listTitle.classList.remove('is-falha');
+        listTitle.classList.add('sms');
+        listTitle.innerHTML = 'Indisponivel (<span id="errorCount">0</span>)';
+        metaHelp.style.display = 'none';
+    } else {
+        listTitle.classList.remove('sms');
+        listTitle.classList.remove('is-falha');
+        listTitle.innerHTML = 'Falhas (<span id="errorCount">0</span>)';
+        metaHelp.style.display = 'none';
+    }
+
     render();
     renderDetails();
 }
 
-function renderStats() {
-    var counts = {}; erros.forEach(function (e) { counts[e.categoria] = (counts[e.categoria] || 0) + 1 });
-    var c = document.getElementById("stats");
-    c.innerHTML = CATEGORIAS.map(function (cat) { return '<button class="stat-btn ' + (activeCategory === cat ? "active" : "") + '" data-cat="' + cat + '"><div class="stat-count">' + (counts[cat] || 0) + '</div><div class="stat-label">' + cat + '</div></button>' }).join("");
-    c.querySelectorAll(".stat-btn").forEach(function (btn) { btn.addEventListener("click", function () { var cat = btn.dataset.cat; activeCategory = activeCategory === cat ? "all" : cat; document.getElementById("categoryFilter").value = activeCategory; renderStats(); render() }) });
-}
-
 function render() {
     var search = document.getElementById("searchInput").value.toLowerCase();
-    var filtered = erros.filter(function (e) { return (e.codigo.includes(search) || e.descricao.toLowerCase().includes(search)) && (activeCategory === "all" || e.categoria === activeCategory) });
-    document.getElementById("errorCount").textContent = filtered.length;
+    var filtered = erros.filter(function (e) { return (e.codigo.includes(search) || e.descricao.toLowerCase().includes(search)); });
+    var count = filtered.length;
+    if (activeChannel === "sms") {
+        count = filtered.filter(function (e) { return e.categoria !== "Falha"; }).length;
+    }
+    var errorCountEl = document.getElementById("errorCount");
+    if (errorCountEl) {
+        errorCountEl.textContent = count;
+    }
     var list = document.getElementById("errorList");
     if (!filtered.length) { list.innerHTML = '<div style="text-align:center;padding:4rem 0;color:var(--muted);font-size:.875rem">Nenhum erro encontrado</div>'; return }
-    list.innerHTML = filtered.map(function (e) { return '<li class="error-item ' + (e.codigo === selectedCodigo ? "selected" : "") + '" data-codigo="' + e.codigo + '"><div><div class="error-code">' + e.codigo + '</div><div class="error-desc">' + e.descricao + '</div></div><span class="badge badge-' + e.categoria + '">' + e.categoria + '</span></li>' }).join("");
+    list.innerHTML = filtered.map(function (e) {
+        var customFalha = "";
+        if (activeChannel === "sms" && (e.codigo === "10001" || e.codigo === "10005")) {
+            customFalha = '<span class="item-status">Falha</span>';
+        }
+        return '<li class="error-item ' + (e.codigo === selectedCodigo ? "selected" : "") + '" data-codigo="' + e.codigo + '"><div><div class="error-code">' + e.codigo + '</div><div class="error-desc">' + e.descricao + '</div></div>' + customFalha + '</li>';
+    }).join("");
     list.querySelectorAll(".error-item").forEach(function (item) { item.addEventListener("click", function () { selectedCodigo = item.dataset.codigo; render(); renderDetails() }) });
-    renderStats();
 }
 
 function renderDetails() {
@@ -135,13 +155,17 @@ function renderDetails() {
         d.acao = "Entrar em contato com o suporte para atualização do prefixo ou correção do número.";
     }
     var c = document.getElementById("errorDetails");
-    c.innerHTML = '<div class="detail-header"><div><div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.25rem"><span class="detail-title">Erro ' + erro.codigo + '</span><span class="badge badge-' + erro.categoria + '">' + erro.categoria + '</span></div><div class="detail-desc">' + erro.descricao + '</div></div></div><hr class="divider"><div class="info-field"><span class="info-icon">📄</span><div><div class="info-label">Causa</div><div class="info-value">' + erro.causa + '</div></div></div><div class="info-field"><span class="info-icon">🔧</span><div><div class="info-label">Solução</div><div class="info-value">' + erro.solucao + '</div></div></div><div class="info-field"><span class="info-icon">⚡</span><div><div class="info-label">Ação recomendada</div><div class="info-value">' + d.acao + '</div></div></div>';
+    var detailStatus = "";
+    if (activeChannel === "sms" && (erro.codigo === "10001" || erro.codigo === "10005")) {
+        detailStatus = '<span class="detail-status">Falha</span>';
+    }
+
+    c.innerHTML = '<div class="detail-header"><div><div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.25rem"><span class="detail-title">Erro ' + erro.codigo + '</span>' + detailStatus + '</div><div class="detail-desc">' + erro.descricao + '</div></div></div><hr class="divider"><div class="info-field"><span class="info-icon">📄</span><div><div class="info-label">Causa</div><div class="info-value">' + erro.causa + '</div></div></div><div class="info-field"><span class="info-icon">🔧</span><div><div class="info-label">Solução</div><div class="info-value">' + erro.solucao + '</div></div></div><div class="info-field"><span class="info-icon">⚡</span><div><div class="info-label">Ação recomendada</div><div class="info-value">' + d.acao + '</div></div></div>';
 
 }
 
 document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("searchInput").addEventListener("input", render);
-    document.getElementById("categoryFilter").addEventListener("change", function (e) { activeCategory = e.target.value; render(); });
 
     document.getElementById("whatsappBtn").addEventListener("click", function () { switchChannel("whatsapp"); });
     document.getElementById("smsBtn").addEventListener("click", function () { switchChannel("sms"); });
