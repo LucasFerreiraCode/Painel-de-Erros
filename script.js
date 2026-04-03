@@ -76,21 +76,12 @@ function switchChannel(channel) {
         document.getElementById("apiType").textContent = "Meta WhatsApp";
         document.getElementById("whatsappBtn").classList.add("active");
         document.getElementById("smsBtn").classList.remove("active");
-        document.getElementById("emailBtn").classList.remove("active");
         document.getElementById("rcsBtn").classList.remove("active");
     } else if (channel === "sms") {
         erros = errosSMS;
         document.getElementById("apiType").textContent = "SMS";
         document.getElementById("smsBtn").classList.add("active");
         document.getElementById("whatsappBtn").classList.remove("active");
-        document.getElementById("emailBtn").classList.remove("active");
-        document.getElementById("rcsBtn").classList.remove("active");
-    } else if (channel === "email") {
-        erros = errosEmail;
-        document.getElementById("apiType").textContent = "E-mail";
-        document.getElementById("emailBtn").classList.add("active");
-        document.getElementById("whatsappBtn").classList.remove("active");
-        document.getElementById("smsBtn").classList.remove("active");
         document.getElementById("rcsBtn").classList.remove("active");
     } else if (channel === "rcs") {
         erros = errosRCS;
@@ -98,7 +89,6 @@ function switchChannel(channel) {
         document.getElementById("rcsBtn").classList.add("active");
         document.getElementById("whatsappBtn").classList.remove("active");
         document.getElementById("smsBtn").classList.remove("active");
-        document.getElementById("emailBtn").classList.remove("active");
     }
     selectedCodigo = null;
 
@@ -128,14 +118,44 @@ function switchChannel(channel) {
 function render() {
     var search = document.getElementById("searchInput").value.toLowerCase();
     var filtered = erros.filter(function (e) { return (e.codigo.includes(search) || e.descricao.toLowerCase().includes(search)); });
-    var count = filtered.length;
+
     if (activeChannel === "sms") {
-        count = filtered.filter(function (e) { return e.categoria !== "Falha"; }).length;
+        var prioridades = ["10001", "10005"];
+        var topFalhas = [];
+        var demais = [];
+
+        filtered.forEach(function (e) {
+            if (prioridades.includes(e.codigo)) {
+                topFalhas.push(e);
+            } else {
+                demais.push(e);
+            }
+        });
+
+        filtered = topFalhas.concat(demais);
     }
+
+    var count = filtered.length;
+    var countFalha = 0;
+    var countIndisponivel = 0;
+
+    if (activeChannel === "sms") {
+        countFalha = filtered.filter(function (e) { return e.categoria === "Falha"; }).length;
+        countIndisponivel = filtered.filter(function (e) { return e.categoria !== "Falha"; }).length;
+        count = countIndisponivel; // fallback para manter compatibilidade com uso existente
+    }
+
     var errorCountEl = document.getElementById("errorCount");
     if (errorCountEl) {
-        errorCountEl.textContent = count;
+        if (activeChannel === "sms") {
+            errorCountEl.textContent = countIndisponivel;
+            // Mostra falhas junto ao título, sem alterar demais lógica
+            document.querySelector('.list-title').innerHTML = 'Indisponível (' + countIndisponivel + ') • Falhas (' + countFalha + ')';
+        } else {
+            errorCountEl.textContent = count;
+        }
     }
+
     var list = document.getElementById("errorList");
     if (!filtered.length) { list.innerHTML = '<div style="text-align:center;padding:4rem 0;color:var(--muted);font-size:.875rem">Nenhum erro encontrado</div>'; return }
     list.innerHTML = filtered.map(function (e) {
@@ -169,7 +189,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.getElementById("whatsappBtn").addEventListener("click", function () { switchChannel("whatsapp"); });
     document.getElementById("smsBtn").addEventListener("click", function () { switchChannel("sms"); });
-    document.getElementById("emailBtn").addEventListener("click", function () { switchChannel("email"); });
     document.getElementById("rcsBtn").addEventListener("click", function () { switchChannel("rcs"); });
 
     switchChannel("whatsapp");
