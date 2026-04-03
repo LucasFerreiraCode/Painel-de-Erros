@@ -36,11 +36,17 @@ var errosEmail = [
 ];
 
 var errosRCS = [
-    { codigo: "40001", categoria: "Entrega", descricao: "Número não suportado", causa: "Dispositivo não compatível com RCS.", solucao: "Verificar compatibilidade.", resposta: "O número não suporta RCS.", acao: "Confirmar suporte e usar fallback." },
-    { codigo: "40002", categoria: "Bloqueio", descricao: "Conteúdo rejeitado", causa: "Violação de políticas.", solucao: "Revisar conteúdo.", resposta: "Mensagem rejeitada por políticas.", acao: "Ajustar mensagem e reenviar." },
-    { codigo: "40003", categoria: "Conta", descricao: "Conta não verificada", causa: "Falta verificação.", solucao: "Verificar conta.", resposta: "Conta RCS não verificada.", acao: "Completar verificação e reconectar." },
-    { codigo: "40004", categoria: "Limite", descricao: "Taxa excedida", causa: "Envios muito rápidos.", solucao: "Reduzir frequência.", resposta: "Ultrapassou taxa de envio.", acao: "Diminuir velocidade e tentar novamente." },
-    { codigo: "40005", categoria: "Template", descricao: "Rich card inválida", causa: "Estrutura incorreta.", solucao: "Corrigir template.", resposta: "Rich card possui erros.", acao: "Ajustar estrutura e validar." }
+    { codigo: "400 INVALID_ARGUMENT", categoria: "Falha", descricao: "Parâmetros inválidos na requisição", causa: "Algum parâmetro errado na requisição.", solucao: "Revisar os parâmetros da requisição e garantir que estejam no formato correto.", resposta: "Parâmetros inválidos. Verifique o formato da requisição.", acao: "Corrigir os parâmetros e realizar uma nova tentativa de envio." },
+    { codigo: "404 NOT_FOUND", categoria: "Falha", descricao: "RCS não disponível para o número", causa: "RCS desabilitado no aparelho do destinatário ou número não habilitado para receber RCS.", solucao: "Verificar se o número está habilitado para receber RCS e se oapparelho é compatível.", resposta: "RCS não está disponível para este número.", acao: "Confirmar que o destinatário possui RCS habilitado ou utilizar outro canal como fallback." },
+    { codigo: "500 INTERNAL", categoria: "Falha", descricao: "Erro interno no servidor RCS", causa: "Erro interno no servidor de RCS ou erro inesperado na hora do processamento (erro da própria Google).", solucao: "Aguarde algunos instantes e tente novamente. Caso o erro persista, entre em contato com o suporte.", resposta: "Erro interno no servidor RCS. Tente novamente mais tarde.", acao: "Reenviar a mensagem após alguns minutos. Se o erro persistir, acione o suporte técnico." },
+    { codigo: "503 UNAVAILABLE", categoria: "Falha", descricao: "Serviço temporariamente indisponível", causa: "Serviço temporariamente indisponível / falha de conexão entre os provedores.", solucao: "Aguardar a normalização do serviço e tentar novamente.", resposta: "Serviço temporariamente indisponível. Tente novamente em alguns minutos.", acao: "Aguardar a recuperação do serviço e realizar uma nova tentativa de envio." },
+
+    { codigo: "Enviado", categoria: "Status", descricao: "Mensagem enviada da plataforma para o Google RCS", causa: "Mensagem foi enviada com sucesso para o servidor RCS do Google.", solucao: "Nenhuma ação necessária.", resposta: "Mensagem enviada com sucesso.", acao: "Aguardar o próximo status de entrega." },
+    { codigo: "Entregue", categoria: "Status", descricao: "Mensagem entregue com sucesso ao destinatário", causa: "A mensagem foi recebida pelo servidor RCS e entregue ao destinatário.", solucao: "Nenhuma ação necessária.", resposta: "Mensagem entregue ao destinatário.", acao: "Mensagem entregue com sucesso." },
+    { codigo: "Lido", categoria: "Status", descricao: "Mensagem foi aberta/visualizada pelo destinatário", causa: "O destinatário abriu e visualizou a mensagem.", solucao: "Nenhuma ação necessária.", resposta: "Mensagem visualizada pelo destinatário.", acao: "Mensagem foi aberta pelo destinatário." },
+    { codigo: "Recebido", categoria: "Status", descricao: "Mensagem recebida pelo aplicativo de mensagens no aparelho", causa: "A mensagem foi recebida pelo aplicativo de mensagens no dispositivo do destinatário.", solucao: "Nenhuma ação necessária.", resposta: "Mensagem recebida no aplicativo.", acao: "Mensagem recebida no dispositivo." },
+    { codigo: "Enviando", categoria: "Status", descricao: "Mensagem em processo de envio, ainda não finalizada", causa: "A mensagem está sendo processada e enviada para o servidor RCS.", solucao: "Nenhuma ação necessária.", resposta: "Mensagem em processamento.", acao: "Aguardar a conclusão do envio." },
+    { codigo: "Pendente", categoria: "Status", descricao: "Mensagem aguardando processamento/envio", causa: "A mensagem está na fila aguardando processamento/envio.", solucao: "Nenhuma ação necessária.", resposta: "Mensagem aguardando processamento.", acao: "Aguardar o processamento da mensagem." }
 ];
 
 var selectedCodigo = null, activeChannel = "whatsapp", erros = errosWhatsApp;
@@ -104,10 +110,10 @@ function switchChannel(channel) {
         listTitle.classList.add('sms');
         listTitle.innerHTML = 'Indisponivel (<span id="errorCount">0</span>)';
         metaHelp.style.display = 'none';
-    } else {
+    } else if (channel === 'rcs') {
         listTitle.classList.remove('sms');
-        listTitle.classList.remove('is-falha');
-        listTitle.innerHTML = 'Falhas (<span id="errorCount">0</span>)';
+        listTitle.classList.add('is-falha');
+        listTitle.innerHTML = 'Status e Falhas (<span id="errorCount">0</span>)';
         metaHelp.style.display = 'none';
     }
 
@@ -143,14 +149,19 @@ function render() {
         countFalha = filtered.filter(function (e) { return e.categoria === "Falha"; }).length;
         countIndisponivel = filtered.filter(function (e) { return e.categoria !== "Falha"; }).length;
         count = countIndisponivel; // fallback para manter compatibilidade com uso existente
+    } else if (activeChannel === "rcs") {
+        countFalha = filtered.filter(function (e) { return e.categoria === "Falha"; }).length;
+        countIndisponivel = filtered.filter(function (e) { return e.categoria !== "Falha"; }).length;
     }
 
     var errorCountEl = document.getElementById("errorCount");
     if (errorCountEl) {
         if (activeChannel === "sms") {
             errorCountEl.textContent = countIndisponivel;
-            // Mostra falhas junto ao título, sem alterar demais lógica
             document.querySelector('.list-title').innerHTML = 'Indisponível (' + countIndisponivel + ') • Falhas (' + countFalha + ')';
+        } else if (activeChannel === "rcs") {
+            errorCountEl.textContent = countFalha;
+            document.querySelector('.list-title').innerHTML = 'Falhas (' + countFalha + ')';
         } else {
             errorCountEl.textContent = count;
         }
@@ -161,6 +172,9 @@ function render() {
     list.innerHTML = filtered.map(function (e) {
         var customFalha = "";
         if (activeChannel === "sms" && (e.codigo === "10001" || e.codigo === "10005")) {
+            customFalha = '<span class="item-status">Falha</span>';
+        }
+        if (activeChannel === "rcs" && e.categoria === "Falha") {
             customFalha = '<span class="item-status">Falha</span>';
         }
         return '<li class="error-item ' + (e.codigo === selectedCodigo ? "selected" : "") + '" data-codigo="' + e.codigo + '"><div><div class="error-code">' + e.codigo + '</div><div class="error-desc">' + e.descricao + '</div></div>' + customFalha + '</li>';
@@ -177,6 +191,9 @@ function renderDetails() {
     var c = document.getElementById("errorDetails");
     var detailStatus = "";
     if (activeChannel === "sms" && (erro.codigo === "10001" || erro.codigo === "10005")) {
+        detailStatus = '<span class="detail-status">Falha</span>';
+    }
+    if (activeChannel === "rcs" && erro.categoria === "Falha") {
         detailStatus = '<span class="detail-status">Falha</span>';
     }
 
