@@ -169,7 +169,7 @@ function render() {
 
     var list = document.getElementById("errorList");
     if (!filtered.length) { list.innerHTML = '<div style="text-align:center;padding:4rem 0;color:var(--muted);font-size:.875rem">Nenhum erro encontrado</div>'; return }
-    list.innerHTML = filtered.map(function (e) {
+    list.innerHTML = filtered.map(function (e, index) {
         var customFalha = "";
         if (activeChannel === "sms" && (e.codigo === "10001" || e.codigo === "10005")) {
             customFalha = '<span class="item-status">Falha</span>';
@@ -177,7 +177,7 @@ function render() {
         if (activeChannel === "rcs" && e.categoria === "Falha") {
             customFalha = '<span class="item-status">Falha</span>';
         }
-        return '<li class="error-item ' + (e.codigo === selectedCodigo ? "selected" : "") + '" data-codigo="' + e.codigo + '"><div><div class="error-code">' + e.codigo + '</div><div class="error-desc">' + e.descricao + '</div></div>' + customFalha + '</li>';
+        return '<li class="error-item animate-item ' + (e.codigo === selectedCodigo ? "selected" : "") + '" data-codigo="' + e.codigo + '" style="animation-delay: ' + (index * 0.03) + 's"><div><div class="error-code">' + e.codigo + '</div><div class="error-desc">' + e.descricao + '</div></div>' + customFalha + '</li>';
     }).join("");
     list.querySelectorAll(".error-item").forEach(function (item) { item.addEventListener("click", function () { selectedCodigo = item.dataset.codigo; render(); renderDetails() }) });
 }
@@ -197,6 +197,9 @@ function renderDetails() {
         detailStatus = '<span class="detail-status">Falha</span>';
     }
 
+    c.classList.remove("fade-in");
+    void c.offsetWidth;
+    c.classList.add("fade-in");
     c.innerHTML = '<div class="detail-header"><div><div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.25rem"><span class="detail-title">Erro ' + erro.codigo + '</span>' + detailStatus + '</div><div class="detail-desc">' + erro.descricao + '</div></div></div><hr class="divider"><div class="info-field"><span class="info-icon">📄</span><div><div class="info-label">Causa</div><div class="info-value">' + erro.causa + '</div></div></div><div class="info-field"><span class="info-icon">🔧</span><div><div class="info-label">Solução</div><div class="info-value">' + erro.solucao + '</div></div></div><div class="info-field"><span class="info-icon">⚡</span><div><div class="info-label">Ação recomendada</div><div class="info-value">' + d.acao + '</div></div></div>';
 
 }
